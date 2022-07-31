@@ -13,10 +13,9 @@ export default class News extends Component {
     };
   }
 
-  // aysnc will wait till the await function returns promise 
-  async componentDidMount()
+  async updateNews ()
   {
-      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=1&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page}&pageSize=${this.props.pageSize}`;
         this.setState({loading: true});
       //fetch is used to get the data from api
       let data = await fetch(url);
@@ -24,42 +23,31 @@ export default class News extends Component {
       //This is how we set the state variable
       this.setState({
         articles : parsedData.articles,
-         totalResults : parsedData.totalResults,
+        totalResults : parsedData.totalResults,
         loading : false})
   }
 
+  // aysnc will wait till the await function returns promise 
+  async componentDidMount()
+  {
+    this.updateNews();
+  }
+
   HandlePreviousBtnClick = async () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`;
-    this.setState({loading: true});
-    let data = await fetch(url);
-    let parsedData = await data.json();
     this.setState({
       page : this.page - 1,
-      articles : parsedData.articles,
-      loading : false
     })
-    
+    this.updateNews();
   };
 
   HandleNextBtnClick = async () => {
-
-    if(this.state.page + 1 >  Math.ceil(this.state.totalResults/5))
+    if(!(this.state.page + 1 >  Math.ceil(this.state.totalResults/5)))
     {
-    
-    }
-    else
-    {
-      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page +1 }&pageSize=${this.props.pageSize}`;
-      this.setState({loading: true});
-      let data = await fetch(url);
-      let parsedData = await data.json();
       this.setState({
         page : this.page + 1,
-        articles : parsedData.articles,
-        loading : false
       })
+      this.updateNews();
     }
-    
   };
 
   render() {
@@ -72,6 +60,8 @@ export default class News extends Component {
             return <div className="col-md-4" key={element.url}>
             <NewsItem title={element.title? element.title.slice(0,45): ""} newsUrl ={element.url} 
             description = {element.description?element.description.slice(0,88): ""} 
+            author = {element.author} publishedAt = {element.publishedAt}
+            source = {element.source.name}
             imageUrl = {element.urlToImage? element.urlToImage: "https://images.moneycontrol.com/static-mcnews/2022/07/sensex_nifty-marketup_sensexup-Niftyup-4-770x433.jpg"} />
             </div>
           })}
