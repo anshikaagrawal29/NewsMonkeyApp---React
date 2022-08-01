@@ -10,9 +10,8 @@ export default class News extends Component {
       articles: [],
       page: 1,
       loading: false,
-      totalResults: 0,
+      totalResults: 0
     };
-
     document.title = `NewsMonkey - ${this.capitalizeFirstLetter(
       this.props.category
     )}`;
@@ -23,6 +22,7 @@ export default class News extends Component {
   };
 
   async updateNews() {
+    console.log(this.state.page + "anshika");
     let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true });
     //fetch is used to get the data from api
@@ -32,7 +32,7 @@ export default class News extends Component {
     this.setState({
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
-      loading: false,
+      loading: false
     });
   }
 
@@ -41,28 +41,10 @@ export default class News extends Component {
     this.updateNews();
   }
 
-  HandlePreviousBtnClick = async () => {
-    this.setState({
-      page: this.page - 1,
-    });
-    this.updateNews();
-  };
-
-  HandleNextBtnClick = async () => {
-    if (!(this.state.page + 1 > Math.ceil(this.state.totalResults / 5))) {
-      this.setState({
-        page: this.page + 1,
-      });
-      this.updateNews();
-    }
-  };
-
   fetchMoreData = async () => {
-    this.setState({
-      page: this.page + 1,
-    });
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
     //fetch is used to get the data from api
+    console.log(url);
     let data = await fetch(url);
     let parsedData = await data.json();
     //This is how we set the state variable
@@ -76,13 +58,12 @@ export default class News extends Component {
   render() {
     return (
       <>
-      
         <h2 className="text-center">News Monkey - Top Headlines</h2>
         {this.state.loading && <Spinner/>}
         <InfiniteScroll
           dataLength={this.state.articles.length}
           next={this.fetchMoreData}
-          hasMore={this.state.articles.length != this.state.totalResults}
+          hasMore={this.state.articles.length !== this.state.totalResults}
           loader={<Spinner />}
         >
           <div className="container my-3">
