@@ -3,15 +3,22 @@ import NewsItem from './NewsItem'
 import Spinner from './Spinner'
 
 export default class News extends Component {
-  constructor()
+  constructor(props)
   {
-    super();
+    super(props);
     this.state = {
       articles : [],
       page: 1,
       loading: false
-    };
+    }
+
+    document.title = `NewsMonkey - ${this.capitalizeFirstLetter(this.props.category)}`
   }
+
+  capitalizeFirstLetter = (string) => {
+
+     return string.charAt(0).toUpperCase() + string.slice(1);
+  }  
 
   async updateNews ()
   {
