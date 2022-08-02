@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {  Component } from "react";
 import NewsItem from "./NewsItem";
 import Spinner from "./Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -15,18 +15,21 @@ export default class News extends Component {
     document.title = `NewsMonkey - ${this.capitalizeFirstLetter(
       this.props.category
     )}`;
+
   }
 
+ 
   capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
   async updateNews() {
-    console.log(this.state.page + "anshika");
+    this.props.setprogress(20);
     let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true });
     //fetch is used to get the data from api
     let data = await fetch(url);
+    this.props.setprogress(50);
     let parsedData = await data.json();
     //This is how we set the state variable
     this.setState({
@@ -34,6 +37,7 @@ export default class News extends Component {
       totalResults: parsedData.totalResults,
       loading: false
     });
+    this.props.setprogress(100);
   }
 
   // aysnc will wait till the await function returns promise
@@ -41,8 +45,9 @@ export default class News extends Component {
     this.updateNews();
   }
 
-  fetchMoreData = async () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
+  fetchMoreData = async () => { 
+    this.setState({page : 1 + this.state.page})
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=8c0aec2ab08f43cc8ca385c08fb96cde&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     //fetch is used to get the data from api
     console.log(url);
     let data = await fetch(url);
