@@ -46,10 +46,10 @@ export default class News extends Component {
   }
 
   fetchMoreData = async () => { 
-    this.setState({page : 1 + this.state.page})
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+   
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page+1}&pageSize=${this.props.pageSize}`;
     //fetch is used to get the data from api
-    console.log(url);
+    this.setState({page : this.state.page + 1})
     let data = await fetch(url);
     let parsedData = await data.json();
     //This is how we set the state variable
@@ -63,7 +63,7 @@ export default class News extends Component {
   render() {
     return (
       <>
-        <h2 className="text-center">News Monkey - Top Headlines</h2>
+        <h2 className="text-center" style={{marginTop: '66px'}}>News Monkey - Top Headlines</h2>
         {this.state.loading && <Spinner/>}
         <InfiniteScroll
           dataLength={this.state.articles.length}
